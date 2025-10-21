@@ -1,0 +1,71 @@
+version: "3.8"
+services:
+  kafka1:
+    build: .
+    image: kafka-kraft:3.9.1
+    container_name: kafka1
+    environment:
+      NODE_ID: 1
+      PROCESS_ROLES: "broker,controller"
+      BROKER_ID: 1
+      ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,CONTROLLER://kafka1:9093"
+      PLAINTEXT_LISTENER: "PLAINTEXT://0.0.0.0:9092"
+      KRAFT_CONTROLLER_LISTENER: "CONTROLLER://0.0.0.0:9093"
+      CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+      LOG_DIR: "/var/lib/kafka/data"
+      METADATA_DIR: "/var/lib/kafka/metadata"
+      KRAFT_CLUSTER_ID: "8f3b6d9e-1c2a-4bca-9fa0-1a2b3c4d5e6f"
+    volumes:
+      - ./data/kafka1/data:/var/lib/kafka/data        # log.dirs -> LOG_DIR
+      - ./data/kafka1/metadata:/var/lib/kafka/metadata  # metadata.log.dir -> METADATA_DIR
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+
+  kafka2:
+    build: .
+    image: kafka-kraft:3.9.1
+    container_name: kafka2
+    environment:
+      NODE_ID: 2
+      PROCESS_ROLES: "broker,controller"
+      BROKER_ID: 2
+      ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9094,CONTROLLER://kafka2:9093"
+      PLAINTEXT_LISTENER: "PLAINTEXT://0.0.0.0:9092"
+      KRAFT_CONTROLLER_LISTENER: "CONTROLLER://0.0.0.0:9093"
+      CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+      LOG_DIR: "/var/lib/kafka/data"
+      METADATA_DIR: "/var/lib/kafka/metadata"
+      KRAFT_CLUSTER_ID: "8f3b6d9e-1c2a-4bca-9fa0-1a2b3c4d5e6f"
+    volumes:
+      - ./data/kafka2/data:/var/lib/kafka/data        # log.dirs -> LOG_DIR
+      - ./data/kafka2/metadata:/var/lib/kafka/metadata  # metadata.log.dir -> METADATA_DIR
+    ports:
+      - "9094:9092"
+      - "9095:9093"
+
+  kafka3:
+    build: .
+    image: kafka-kraft:3.9.1
+    container_name: kafka3
+    hostname: kafka3
+    environment:
+      NODE_ID: 3
+      PROCESS_ROLES: "broker,controller"
+      BROKER_ID: 3
+      # advertise the host port so clients on host can reach it
+      # map to different host ports
+      ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9096,CONTROLLER://kafka3:9093"
+      # inside container listen on all interfaces
+      PLAINTEXT_LISTENER: "PLAINTEXT://0.0.0.0:9092"
+      KRAFT_CONTROLLER_LISTENER: "CONTROLLER://0.0.0.0:9093"
+      CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+      LOG_DIR: "/var/lib/kafka/data"
+      METADATA_DIR: "/var/lib/kafka/metadata"
+      KRAFT_CLUSTER_ID: "8f3b6d9e-1c2a-4bca-9fa0-1a2b3c4d5e6f"
+    volumes:
+      - ./data/kafka3/data:/var/lib/kafka/data        # log.dirs -> LOG_DIR
+      - ./data/kafka3/metadata:/var/lib/kafka/metadata  # metadata.log.dir -> METADATA_DIR
+    ports:
+      - "9096:9092" # host:container
+      - "9097:9093"

@@ -1,0 +1,11 @@
+# attempt to list topics via kafka-topics (in your image) or use curl against kafka if you have tool
+docker exec -it kafka1 /opt/bin/kafka-topics.sh --bootstrap-server kafka1:9092 --list
+# or from host (using host-mapped ports)
+# Note: kafka-topics.sh inside container may be easiest
+
+# send to topic-one on host:9092
+docker exec -it kafka1 /opt/bin/kafka-console-producer.sh --broker-list kafka1:9092 --topic topic-one
+> key1:hello
+
+# Confirm consumer logs (your Spring Boot console) show the message processed. Also use kafka-console-consumer to read topic or DLQ directly:
+docker exec -it kafka1 /opt/bin/kafka-console-consumer.sh --bootstrap-server kafka1:9092 --topic topic-two-dlq --from-beginning --max-messages 10

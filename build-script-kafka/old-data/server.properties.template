@@ -1,0 +1,27 @@
+# Basic process roles and ids
+process.roles=${PROCESS_ROLES}
+node.id=${NODE_ID}
+broker.id=${BROKER_ID}
+
+# Listeners & advertised
+listeners=${PLAINTEXT_LISTENER},${KRAFT_CONTROLLER_LISTENER}
+advertised.listeners=${ADVERTISED_LISTENERS}
+controller.listener.names=CONTROLLER
+
+
+# Data / logs
+log.dirs=${LOG_DIR}                              # topic logs
+metadata.log.dir=${METADATA_DIR}                # KRaft metadata (separate)
+
+# Controller quorum voters (comma separated list)
+controller.quorum.voters=${CONTROLLER_QUORUM_VOTERS}
+
+# Replication defaults (adjust for your cluster)
+offsets.topic.replication.factor=3
+transaction.state.log.replication.factor=3
+transaction.state.log.min.isr=2
+
+# Performance / tuning (small defaults)
+num.network.threads=3
+num.io.threads=8
+socket.request.max.bytes=104857600

@@ -1,0 +1,87 @@
+version: "3.8"
+services:
+  kafka1:
+    build: .
+    image: kafka-kraft:3.9.1
+    container_name: kafka1
+    environment:
+      NODE_ID: 1
+      BROKER_ID: 1
+      PROCESS_ROLES: "broker,controller"
+
+      # inside container listeners
+      LISTENERS: "INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093"
+      # names used by controller and mapping
+      LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      # advertise INTERNAL for inter-broker traffic, EXTERNAL for host clients, CONTROLLER uses container hostname
+      ADVERTISED_LISTENERS: "INTERNAL://kafka1:9092,EXTERNAL://localhost:9092,CONTROLLER://kafka1:9093"
+      INTER_BROKER_LISTENER_NAME: INTERNAL
+      CONTROLLER_LISTENER_NAME: CONTROLLER
+
+      # controller quorum must use container hostnames (identical on all nodes)
+      CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+
+      # data dirs + same cluster id
+      LOG_DIR: "/var/lib/kafka/data"
+      METADATA_DIR: "/var/lib/kafka/metadata"
+      KRAFT_CLUSTER_ID: "8f3b6d9e-1c2a-4bca-9fa0-1a2b3c4d5e6f"
+    volumes:
+      - ./data/kafka1/data:/var/lib/kafka/data
+      - ./data/kafka1/metadata:/var/lib/kafka/metadata
+    ports:
+      - "9092:29092"   # host localhost:9092 -> container EXTERNAL:29092
+      - "9093:9093"    # controller
+
+  kafka2:
+    build: .
+    image: kafka-kraft:3.9.1
+    container_name: kafka2
+    environment:
+      NODE_ID: 2
+      BROKER_ID: 2
+      PROCESS_ROLES: "broker,controller"
+
+      LISTENERS: "INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093"
+      LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      ADVERTISED_LISTENERS: "INTERNAL://kafka2:9092,EXTERNAL://localhost:9094,CONTROLLER://kafka2:9093"
+      INTER_BROKER_LISTENER_NAME: INTERNAL
+      CONTROLLER_LISTENER_NAME: CONTROLLER
+
+      CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+
+      LOG_DIR: "/var/lib/kafka/data"
+      METADATA_DIR: "/var/lib/kafka/metadata"
+      KRAFT_CLUSTER_ID: "8f3b6d9e-1c2a-4bca-9fa0-1a2b3c4d5e6f"
+    volumes:
+      - ./data/kafka2/data:/var/lib/kafka/data
+      - ./data/kafka2/metadata:/var/lib/kafka/metadata
+    ports:
+      - "9094:29092"   # host localhost:9094 -> container EXTERNAL:29092
+      - "9095:9093"
+
+  kafka3:
+    build: .
+    image: kafka-kraft:3.9.1
+    container_name: kafka3
+    environment:
+      NODE_ID: 3
+      BROKER_ID: 3
+      PROCESS_ROLES: "broker,controller"
+
+      LISTENERS: "INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093"
+      LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      ADVERTISED_LISTENERS: "INTERNAL://kafka3:9092,EXTERNAL://localhost:9096,CONTROLLER://kafka3:9093"
+      INTER_BROKER_LISTENER_NAME: INTERNAL
+      CONTROLLER_LISTENER_NAME: CONTROLLER
+
+      CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+
+      LOG_DIR: "/var/lib/kafka/data"
+      METADATA_DIR: "/var/lib/kafka/metadata"
+      KRAFT_CLUSTER_ID: "8f3b6d9e-1c2a-4bca-9fa0-1a2b3c4d5e6f"
+    volumes:
+      - ./data/kafka3/data:/var/lib/kafka/data
+      - ./data/kafka3/metadata:/var/lib/kafka/metadata
+    ports:
+      - "9096:29092"
+      - "9097:9093"

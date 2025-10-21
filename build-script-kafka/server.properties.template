@@ -1,0 +1,40 @@
+# Basic process roles and ids
+process.roles=${PROCESS_ROLES}
+node.id=${NODE_ID}
+broker.id=${BROKER_ID}
+
+# Listeners & advertised
+# LISTENERS should be provided by env (or derived by entrypoint from legacy vars).
+# Example: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+listeners=${LISTENERS}
+
+# Map listener names to security protocols (required when using named listeners)
+# Example: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:CONTROLLER
+listener.security.protocol.map=${LISTENER_SECURITY_PROTOCOL_MAP}
+
+# What the brokers advertise (host:port) for each listener name
+advertised.listeners=${ADVERTISED_LISTENERS}
+
+# Which listener to use for inter-broker replication/replica fetch
+inter.broker.listener.name=${INTER_BROKER_LISTENER_NAME}
+
+# Controller listener name (should match the CONTROLLER part above)
+controller.listener.names=${CONTROLLER_LISTENER_NAME}
+
+
+# Data / logs
+log.dirs=${LOG_DIR}                              # topic logs
+metadata.log.dir=${METADATA_DIR}                # KRaft metadata (separate)
+
+# Controller quorum voters (comma separated list)
+controller.quorum.voters=${CONTROLLER_QUORUM_VOTERS}
+
+# Replication defaults (adjust for your cluster)
+offsets.topic.replication.factor=3
+transaction.state.log.replication.factor=3
+transaction.state.log.min.isr=2
+
+# Performance / tuning (small defaults)
+num.network.threads=3
+num.io.threads=8
+socket.request.max.bytes=104857600
