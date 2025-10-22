@@ -1,6 +1,7 @@
 package com.example.kafkatesting;
 
 import com.example.kafkatesting.constants.KafkaTopics;
+import com.example.kafkatesting.consumers.ConsumerOne;
 import com.example.kafkatesting.consumers.ConsumerTwo;
 import com.example.kafkatesting.producers.ProducerOneService;
 import com.example.kafkatesting.producers.ProducerTwoService;
@@ -29,6 +30,9 @@ public class ProducerConsumerIntegrationTest {
 
     @Autowired
     ProducerTwoService producerTwo;
+
+    @Autowired
+    ConsumerOne consumerOne;
 
     @Autowired
     ConsumerTwo consumerTwo; // for checking processed count etc
@@ -75,6 +79,8 @@ public class ProducerConsumerIntegrationTest {
                     // - OR, attempt to consume from the topic to ensure message exists (if consumer commits later)
                     // Example: try to find the message in topic using KafkaConsumer (not ideal with auto commit).
                     // For brevity we assume consumer processed successfully if no exception thrown earlier.
+                    System.out.println("Counter: "+consumerOne.getCounter());
+                    Assertions.assertTrue(consumerOne.getCounter() >= 1);
                 });
     }
 
@@ -96,6 +102,7 @@ public class ProducerConsumerIntegrationTest {
                     ConsumerRecords<String, String> recs = dlqConsumer.poll(Duration.ofSeconds(1));
                     boolean found = false;
                     for (ConsumerRecord<String, String> r : recs) {
+                        System.out.println("Value: "+r.value()+", key: "+r.key());
                         if (key.equals(r.key()) && r.value().equals(payload)) {
                             found = true;
                             break;

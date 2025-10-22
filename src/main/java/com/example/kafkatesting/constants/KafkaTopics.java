@@ -13,7 +13,7 @@ public final class KafkaTopics {
 
     // Topic for ProducerTwo and ConsumerTwo
     public static final String TOPIC_TWO = "topic-two";
-    public static final String TOPIC_GROUP_TWO = "group-one";
+    public static final String TOPIC_GROUP_TWO = "group-two";
     public static final String TOPIC_TWO_PREFIX = "consumer-two-";
 
     // dead-letter queue (DLQ)
